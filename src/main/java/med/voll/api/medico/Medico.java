@@ -25,4 +25,11 @@ public class Medico {
     @Embedded //embutida: não tem relacionamento explícito, mas faz parte da tabela medico.
     private Endereco endereco;
 
+    public Medico(DadosCadastroMedico dados) {
+        this.nome = dados.nome();
+        this.email = dados.email();
+        this.crm = dados.crm();
+        this.especialidade = dados.especialidade();
+        this.endereco = new Endereco(dados.endereco());
+    }
 }
