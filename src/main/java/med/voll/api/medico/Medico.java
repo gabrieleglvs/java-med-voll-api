@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import med.voll.api.consulta.Consulta;
 import med.voll.api.endereco.Endereco;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "medicos")
 @Entity(name = "Medico")
@@ -27,8 +31,8 @@ public class Medico {
     private Endereco endereco;
     private Boolean ativo;
 
-//    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<Consulta> consultas = new ArrayList<>();
+    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Consulta> consultas = new ArrayList<>();
 
     public Medico(DadosCadastroMedico dados) {
         this.ativo = true;
