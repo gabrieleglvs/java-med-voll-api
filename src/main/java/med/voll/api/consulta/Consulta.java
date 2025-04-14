@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 @Table(name = "consultas")
 @Entity(name = "Consulta")
-
 public class Consulta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +29,11 @@ public class Consulta {
     @JoinColumn(name = "medico_id")
     private Medico medico;
 
-    private LocalDateTime dataEHora;
+    private LocalDateTime data_e_hora;
+
+    public Consulta(Paciente paciente, Medico medico, LocalDateTime dataEHora) {
+        this.paciente = paciente;
+        this.medico = medico;
+        this.data_e_hora = dataEHora;
+    }
 }
