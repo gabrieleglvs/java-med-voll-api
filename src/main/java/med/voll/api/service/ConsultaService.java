@@ -3,11 +3,15 @@ package med.voll.api.service;
 import med.voll.api.consulta.Consulta;
 import med.voll.api.consulta.ConsultaRepository;
 import med.voll.api.consulta.DadosCadastroConsulta;
+import med.voll.api.consulta.DadosListagemConsulta;
 import med.voll.api.medico.MedicoRepository;
 import med.voll.api.paciente.PacienteRepository;
 import med.voll.api.validador.ConsultaValidador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ConsultaService {
@@ -20,13 +24,39 @@ public class ConsultaService {
     @Autowired
     private ConsultaValidador validador;
 
-    public void marcarConsulta(DadosCadastroConsulta dados){
-        var paciente = pacienteRepository.getReferenceById(dados.paciente_id());
-        var medico = medicoRepository.getReferenceById(dados.medico_id());
+    public List<DadosListagemConsulta> listarConsulta() {
+        return repository.findAll()
+                .stream().map(consulta -> new DadosListagemConsulta(consulta))
+                .collect(Collectors.toList());
+    }
 
-        if(validador.validarHorarioComercial(dados)){
-            var consulta = new Consulta(paciente, medico, dados.dataEHora());
-            repository.save(consulta);
+    public DadosCadastroConsulta validarExistenciaMedicoConsulta(DadosCadastroConsulta dados) throws Exception {
+        List<DadosListagemConsulta> consultas = listarConsulta();
+
+        if(dados.medico_id() == null) {
+            var dadosConferidos = validador.validarMedicoParaAtendimento(dados, consultas);
+            return dadosConferidos;
+        }
+        return dados;
+    }
+
+    public void marcarConsulta(DadosCadastroConsulta dados) throws Exception {
+        var dadosValidados = validarExistenciaMedicoConsulta(dados);
+
+        //System.out.println(dadosValidados);
+
+        var paciente = pacienteRepository.getReferenceById(dadosValidados.paciente_id());
+        var medico = medicoRepository.getReferenceById(dadosValidados.medico_id());
+        var consultasPaciente = repository.findByPaciente(paciente);
+        var consultasMedico = repository.findByMedico(medico);
+
+        if(validador.validarAtivos(paciente, medico)) {
+            if(validador.validarAgendaPacienteMedico(dadosValidados, consultasPaciente, consultasMedico)) {
+                if(validador.validarDataEHorario(dadosValidados)) {
+                    var consulta = new Consulta(paciente, medico, dadosValidados.dataEHora());
+                    repository.save(consulta);
+                }
+            }
         }
     }
 }
