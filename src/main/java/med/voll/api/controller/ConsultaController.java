@@ -14,7 +14,7 @@ public class ConsultaController {
 
     @PostMapping
     @Transactional
-    public void marcarConsulta(@RequestBody DadosCadastroConsulta dados){
+    public void marcarConsulta(@RequestBody DadosCadastroConsulta dados) throws Exception {
         service.marcarConsulta(dados);
     }
 }
