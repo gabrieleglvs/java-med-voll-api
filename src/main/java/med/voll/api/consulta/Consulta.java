@@ -31,9 +31,15 @@ public class Consulta {
 
     private LocalDateTime data_e_hora;
 
+    private boolean ativo;
+    @Enumerated(EnumType.STRING)
+    private MotivoCancelamento motivo_cancelamento;
+
     public Consulta(Paciente paciente, Medico medico, LocalDateTime dataEHora) {
         this.paciente = paciente;
         this.medico = medico;
         this.data_e_hora = dataEHora;
+        this.ativo = true;
+        this.motivo_cancelamento = MotivoCancelamento.VAZIO;
     }
 }
