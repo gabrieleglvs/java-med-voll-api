@@ -42,4 +42,9 @@ public class Consulta {
         this.ativo = true;
         this.motivo_cancelamento = MotivoCancelamento.VAZIO;
     }
+
+    public void cancelarConsulta(DadosCancelarConsulta dados) {
+        this.ativo = false;
+        this.motivo_cancelamento = MotivoCancelamento.fromDescricao(dados.motivo_cancelamento());
+    }
 }
