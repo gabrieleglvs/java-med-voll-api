@@ -1,9 +1,7 @@
 package med.voll.api.service;
 
-import med.voll.api.consulta.Consulta;
-import med.voll.api.consulta.ConsultaRepository;
-import med.voll.api.consulta.DadosCadastroConsulta;
-import med.voll.api.consulta.DadosListagemConsulta;
+import jakarta.transaction.Transactional;
+import med.voll.api.consulta.*;
 import med.voll.api.medico.MedicoRepository;
 import med.voll.api.paciente.PacienteRepository;
 import med.voll.api.validador.ConsultaValidador;
@@ -40,6 +38,7 @@ public class ConsultaService {
         return dados;
     }
 
+    @Transactional
     public void marcarConsulta(DadosCadastroConsulta dados) throws Exception {
         var dadosValidados = validarExistenciaMedicoConsulta(dados);
 
@@ -58,5 +57,11 @@ public class ConsultaService {
                 }
             }
         }
+    }
+
+    @Transactional
+    public void cancelarConsulta(DadosCancelarConsulta dados) {
+        var consulta = repository.getReferenceById(dados.id());
+        consulta.cancelarConsulta(dados);
     }
 }
